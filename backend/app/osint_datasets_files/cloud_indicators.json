@@ -1,0 +1,43 @@
+{
+  "aws": [
+    "cloudfront",
+    "amazonaws",
+    "s3.amazonaws",
+    "aws-pay",
+    "s3-website"
+  ],
+  "azure": [
+    "azureedge",
+    "windows.net",
+    "azurewebsites.net",
+    "blob.core.windows.net"
+  ],
+  "gcp": [
+    "googleapis",
+    "storage.googleapis.com",
+    "appspot.com",
+    "googlesyndication",
+    "youtube",
+    "withgoogle",
+    "esf"
+  ],
+  "cloudflare": [
+    "cloudflare",
+    "cf-ray",
+    "cdn-cgi"
+  ],
+  "fastly": [
+    "fastly",
+    "ssl.fastly",
+    "f.fastly"
+  ],
+  "akamai": [
+    "akamai",
+    "noc.akamai",
+    "akamaiedge"
+  ],
+  "digitalocean": [
+    "digitaloceanspaces",
+    "digitalocean"
+  ]
+}
