@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTRIX Dashboard - Cyber Security Scanner</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" id="hljsTheme"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <span class="brand-bracket">[</span> SENTRIX <span class="brand-bracket">]</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-action" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle Theme">
+                    🌙
+                </button>
+                <!-- <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">System
+                    Online</span> -->
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4 px-4 main-container">
+
+        <!-- HOME VIEW -->
+        <div id="homeView">
+            <!-- Stats Row -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-blue">🔍</div>
+                        <div class="stat-info">
+                            <h3>Total Scans</h3>
+                            <h2 id="totalScans">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-green">✅</div>
+                        <div class="stat-info">
+                            <h3>Completed</h3>
+                            <h2 id="completedScans">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-red">⚠️</div>
+                        <div class="stat-info">
+                            <h3>High Risk</h3>
+                            <h2 id="highRiskScans">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-purple">⚡</div>
+                        <div class="stat-info">
+                            <h3>Active</h3>
+                            <h2 id="activeScans">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts & New Scan Row -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="cyber-card h-100">
+                        <div class="card-header-cyber">
+                            <h4 class="mb-0">Scan Analytics</h4>
+                        </div>
+                        <div class="card-body-cyber">
+                            <div class="row align-items-center h-100">
+                                <!-- Status Chart -->
+                                <div class="col-md-3 border-end border-theme">
+                                    <div class="chart-container"
+                                        style="position: relative; height: 180px; width: 100%;">
+                                        <canvas id="statusChart"></canvas>
+                                    </div>
+                                </div>
+                                <!-- Risk Chart -->
+                                <div class="col-md-4 border-end border-theme">
+                                    <div class="chart-container"
+                                        style="position: relative; height: 180px; width: 100%;">
+                                        <canvas id="riskChart"></canvas>
+                                    </div>
+                                </div>
+                                <!-- Heatmap -->
+                                <div class="col-md-5">
+                                    <h5 class="mb-2 small text-uppercase fw-bold text-center"
+                                        style="letter-spacing: 1px; padding-bottom: 15px;">Risks</h5>
+                                    <table class="table custom-table table-sm text-center align-middle mb-0"
+                                        id="heatmapTable" style="font-size: 0.8rem;">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-start" style="padding: 0.25rem 0.5rem;">Category</th>
+                                                <th class="text-danger" style="padding: 0.25rem 0.5rem;">High</th>
+                                                <th class="text-warning" style="padding: 0.25rem 0.5rem;">Medium</th>
+                                                <th class="text-success" style="padding: 0.25rem 0.5rem;">Low</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="heatmapBody">
+                                            <!-- Filled by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cyber-card h-100">
+                        <div class="card-header-cyber">
+                            <h4 class="mb-0">Quick Scan</h4>
+                        </div>
+                        <div class="card-body-cyber d-flex flex-column justify-content-center">
+                            <p class="mb-4">Initialize a new security scan for a target domain.</p>
+                            <div class="input-group-cyber mb-3">
+                                <div class="input-wrapper w-100">
+                                    <span class="input-prefix">https://</span>
+                                    <input type="text" id="targetUrl" class="cyber-input"
+                                        placeholder="target.domain.com">
+                                </div>
+                            </div>
+                            <button class="cyber-btn-primary w-100" id="startScanBtn">
+                                <span class="btn-text">START SCAN</span>
+                                <span class="btn-glow"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Tasks Table -->
+            <div class="cyber-card">
+                <div class="card-header-cyber d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Recent Tasks</h4>
+                    <div>
+                        <button class="btn btn-sm btn-outline-danger me-2" onclick="deleteAllTasks()">Delete
+                            All</button>
+                        <button class="btn btn-sm btn-action" onclick="loadDashboardData()">Refresh</button>
+                    </div>
+                </div>
+                <div class="card-body-cyber p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Target</th>
+                                    <th>Status</th>
+                                    <th>Risk</th>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasksTableBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCAN DETAIL VIEW (Hidden by default) -->
+        <div id="scanView" style="display: none;">
+            <button class="btn btn-outline-secondary mb-3" onclick="showHome()">← Back to Dashboard</button>
+
+            <!-- Header -->
+            <div class="header-container mb-4 text-start">
+                <h2 class="mb-1" style="font-size: 1.8rem; font-weight: 700;">
+                    <span class="brand-bracket">[</span> Scan Results <span class="brand-bracket">]</span>
+                </h2>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-secondary small fw-medium" style="letter-spacing: 0.5px;">TARGET:</span>
+                    <span id="scanTargetDisplay" class="small"></span>
+                </div>
+            </div>
+
+            <!-- 1. Top Section — Progress Bar -->
+            <div id="progressContainer" class="cyber-card mb-4 sticky-top-custom">
+                <div class="card-body-cyber py-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">Scan Progress</h5>
+                        <span id="progressStatusText" class="badge bg-primary">Initializing...</span>
+                    </div>
+                    <div class="progress-cyber">
+                        <div id="scanProgressBar" class="progress-bar-cyber">
+                            <div class="progress-glow"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Stats Section (Two-Column Layout, 1:2 Ratio) -->
+            <div class="row mb-4">
+                <!-- Column 1: Dynamic Risk Level -->
+                <div class="col-md-4">
+                    <div id="riskContainer"
+                        class="cyber-card h-100 d-flex flex-column align-items-center justify-content-center p-4">
+                        <h4 class="mb-3">Risk Level</h4>
+                        <div class="risk-score-circle pulse-glow mb-3">
+                            <span id="riskScore" class="risk-score-value">0</span>
+                        </div>
+                        <h3 id="riskLabel" class="risk-label">Low</h3>
+                    </div>
+                </div>
+
+                <!-- Column 2: Stats Summary -->
+                <div class="col-md-8">
+                    <div class="row h-100">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="cyber-card h-100 p-3 text-center d-flex flex-column justify-content-center">
+                                <div class="stat-icon icon-blue mx-auto mb-2">📁</div>
+                                <h2 id="fileCount" class="mb-0">0</h2>
+                                <small class="text-secondary">JS Files</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="cyber-card h-100 p-3 text-center d-flex flex-column justify-content-center">
+                                <div class="stat-icon icon-red mx-auto mb-2">🔐</div>
+                                <h2 id="leakCount" class="mb-0">0</h2>
+                                <small class="text-secondary">Leaks Detected</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cyber-card h-100 p-3 text-center d-flex flex-column justify-content-center">
+                                <div class="stat-icon icon-purple mx-auto mb-2">🔗</div>
+                                <h2 id="endpointCount" class="mb-0">0</h2>
+                                <small class="text-secondary">Paths Found</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. JavaScript Files Section (with Pagination) -->
+            <div id="jsFilesContainer" class="cyber-card mb-4" style="display:none;">
+                <div class="card-header-cyber d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="header-icon">📁</div>
+                        <h4 class="mb-0">JavaScript Files</h4>
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="btn btn-sm btn-action" id="prevJsBtn" onclick="changeJsPage(-1)"
+                            disabled>Previous</button>
+                        <span id="jsPageIndicator" class="mx-2">Page 1</span>
+                        <button class="btn btn-sm btn-action" id="nextJsBtn" onclick="changeJsPage(1)"
+                            disabled>Next</button>
+                    </div>
+                </div>
+                <div class="card-body-cyber p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Filename / URL</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jsFilesList">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Paths Found Section (Paginated) -->
+            <div id="endpointsContainer" class="cyber-card mb-4" style="display:none;">
+                <div class="card-header-cyber d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="header-icon">🔗</div>
+                        <h4 class="mb-0">Paths Found</h4>
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="btn btn-sm btn-action" id="prevEpBtn" onclick="changeEpPage(-1)"
+                            disabled>Previous</button>
+                        <span id="epPageIndicator" class="mx-2">Page 1</span>
+                        <button class="btn btn-sm btn-action" id="nextEpBtn" onclick="changeEpPage(1)"
+                            disabled>Next</button>
+                    </div>
+                </div>
+                <div class="card-body-cyber p-0" style="min-height: 300px;">
+                    <div class="table-responsive">
+                        <table class="table mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Path</th>
+                                    <th>Source</th>
+                                </tr>
+                            </thead>
+                            <tbody id="endpointsList">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Leaks Summary Section -->
+            <div id="leaksContainer" class="cyber-card mb-4" style="display:none;">
+                <div class="card-header-cyber d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2" data-bs-toggle="collapse" data-bs-target="#leaksBody"
+                        style="cursor: pointer;">
+                        <div class="header-icon">🔐</div>
+                        <h4 class="mb-0">Leak Detection Results</h4>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Stop propagation wrapper as backup -->
+                        <div onclick="event.stopPropagation();">
+                            <select id="leakRiskFilter" class="cyber-select" style="width: 150px;">
+                                <option value="all">All Risks</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <span style="color: var(--text-primary); cursor: pointer;" data-bs-toggle="collapse"
+                            data-bs-target="#leaksBody">▼</span>
+                    </div>
+                </div>
+                <div id="leaksBody" class="collapse show">
+                    <div class="card-body-cyber p-0">
+                        <div class="table-responsive">
+                            <table class="table mb-0 custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Risk Analysis</th>
+                                        <th>Details & OSINT</th>
+                                        <th>Evidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leakCards">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Logs Container (Collapsible) -->
+            <div id="taskLogsContainer" class="cyber-card mb-4" style="display:none;">
+                <div class="card-header-cyber d-flex justify-content-between align-items-center" onclick="toggleLogs()"
+                    style="cursor: pointer;">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="header-icon">📝</div>
+                        <h4 class="mb-0">Execution Logs</h4>
+                    </div>
+                    <span>▼</span>
+                </div>
+                <div class="card-body-cyber" id="taskLogsBody" style="display:none;">
+                    <div id="taskLogs" class="log-box-cyber"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal for JS Content -->
+        <div class="modal fade" id="jsContentModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content bg-dark-custom border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title" id="jsModalTitle">File Content</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <pre><code id="jsModalContent" class="language-javascript" style="height: 100%; min-height: 400px;"></code></pre>
+                    </div>
+                    <!-- Navigation Buttons (Fixed relative to modal content) -->
+                    <button id="prevJsModalBtn"
+                        class="btn btn-dark position-absolute top-50 start-0 translate-middle-y ms-0 border border-secondary shadow"
+                        style="z-index: 1050; opacity: 0.8; border-radius: 0 50% 50% 0; width: 40px; height: 60px; padding: 0; left: 0;">&#10094;</button>
+                    <button id="nextJsModalBtn"
+                        class="btn btn-dark position-absolute top-50 end-0 translate-middle-y me-0 border border-secondary shadow"
+                        style="z-index: 1050; opacity: 0.8; border-radius: 50% 0 0 50%; width: 40px; height: 60px; padding: 0; right: 0;">&#10095;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OSINT Proof Modal -->
+        <div class="modal fade" id="osintProofModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content border-theme cyber-shadow osint-modal-content">
+                    <div class="modal-header border-theme">
+                        <div class="d-flex align-items-center gap-2">
+                            <span style="font-size: 1.5rem;">👁️</span>
+                            <h5 class="modal-title fw-bold" id="osintModalTitle">OSINT Intelligence Report
+                            </h5>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <!-- 1. Executive Summary -->
+                        <div class="mb-4">
+                            <span class="modal-section-header">Intelligence Brief</span>
+                            <div class="p-3 brief-container scanline-effect mt-2">
+                                <p id="osintBrief" class="mb-0">
+                                    Generating assessment...
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <!-- 2. Exposure Context -->
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <span class="modal-section-header">Exposure Context</span>
+                                <div class="p-3 box-container mt-2 d-flex flex-column" id="exposureContextBox"
+                                    style="min-height: 120px;">
+                                    <ul class="list-unstyled mb-0" id="exposureContextList">
+                                        <!-- Populated via JS -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- 3. Domain & Cloud -->
+                            <div class="col-md-6">
+                                <span class="modal-section-header">Infrastructure</span>
+                                <div class="p-3 box-container mt-2 d-flex flex-column" id="infraBox"
+                                    style="min-height: 120px;">
+                                    <ul class="list-unstyled mb-0" id="infraList">
+                                        <!-- Populated via JS -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. AI Risk Explanation -->
+                        <div class="mt-4 pt-2 border-top border-secondary border-opacity-10" id="aiExplanationSection">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="modal-section-header" style="color: var(--accent-primary) !important;">
+                                    AI Risk Explanation
+                                </span>
+                                <button class="btn btn-sm btn-outline-primary" id="askAiBtn"
+                                    onclick="askAiExplanation()">
+                                    ✨ Ask AI
+                                </button>
+                            </div>
+                            <div id="aiExplanationContent" class="p-3 box-container"
+                                style="min-height: 80px; display: none;">
+                                <div id="aiLoading" class="text-center" style="display: none;">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                    <span class="small ms-2">Analyzing risk factors...</span>
+                                </div>
+                                <div id="aiText" class="small text-light" style="white-space: pre-wrap;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 5. One-Click Verification -->
+                        <div class="mt-4 pt-2 border-top border-secondary border-opacity-10">
+                            <span class="modal-section-header" style="color: var(--accent-danger) !important;">
+                                One-Click Verification (Dark Web / Dorks)
+                            </span>
+                            <div class="d-flex flex-wrap gap-2 mt-2" id="verificationLinks">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-theme">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close
+                            Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+
+</html>
