@@ -1,0 +1,60 @@
+EMAIL:
+  regex: "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+  severity: low
+  category: info
+
+PHONE_NUMBER:
+  regex: "\\b(?:\\+91[-\\s]?|91[-\\s]?|0)?[6-9]\\d{9}\\b"
+  severity: low
+  category: info
+
+IPv4_ADDRESS:
+  regex: "\\b((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\b"
+  severity: low
+  category: info
+
+IPv6_ADDRESS:
+  regex: "\\b(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|:([0-9a-fA-F]{1,4}:){1,7}|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,3}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))\\b"
+  severity: low
+  category: info
+
+IP_PORT:
+  regex: "\\b((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d):([0-9]{1,5})\\b"
+  severity: low
+  category: info
+
+CHINESE_IDCARD:
+  regex: "['\"]((\\d{8}(0\\d|10|11|12)([0-2]\\d|30|31)\\d{3}$)|(\\d{6}(18|19|20)\\d{2}(0[1-9]|10|11|12)([0-2]\\d|30|31)\\d{3}(\\d|X|x)))['\"]"
+  severity: low
+  category: info
+
+MOBILE_NUMBER:
+  regex: "['\"](1(3([0-35-9]\\d|4[1-8])|4[14-9]\\d|5([\\d]\\d|7[1-79])|66\\d|7[2-35-8]\\d|8\\d{2}|9[89]\\d)\\d{7})['\"]"
+  severity: low
+  category: info
+
+EMAIL_STRICT:
+  regex: "['\"][a-zA-Z0-9\\._\\-]*@[a-zA-Z0-9\\._\\-]{1,63}\\.((?!js|css|jpg|jpeg|png|ico)[a-zA-Z]{2,})['\"]"
+  severity: low
+  category: info
+
+IP_URL_WRAPPED:
+  regex: "['\"](([a-zA-Z0-9]+:)?\\/\\/)?\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(\\/.*?)?['\"]"
+  severity: low
+  category: info
+
+IP_PORT_URL_WRAPPED:
+  regex: "['\"](([a-zA-Z0-9]+:)?\\/\\/)?\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\:\\d{1,5}(\\/.*?)?['\"]"
+  severity: low
+  category: info
+
+HTTP_URL:
+  regex: "['\"]((?:[a-zA-Z]{1,10}://|//)[a-zA-Z0-9._~:/?#@!$&*+,;=%-]+?)['\"]"
+  severity: info
+  category: info
+
+FILE_PATH:
+  regex: "['\"]((?:/|\\.\\./|\\./)[^\"'><,;| *()(%%$^/\\\\\\[\\]][^\"'><,;|()]+?)['\"]"
+  severity: info
+  category: info
+
