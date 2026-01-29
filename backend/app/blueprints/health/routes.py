@@ -14,6 +14,6 @@ def health():
         mongo_ok = False
 
     return jsonify({
-        "service": "SENTRIX-v2",
+        "service": "sentrix-v2",
         "mongo": mongo_ok
     })
