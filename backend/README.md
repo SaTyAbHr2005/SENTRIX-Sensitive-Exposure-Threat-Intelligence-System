@@ -111,6 +111,8 @@ graph LR
     API --> UI
 ```
 
+---
+
 ## 🛠️ Tech Stack
 
 - **Backend Framework**: Flask (Python)
@@ -119,6 +121,27 @@ graph LR
 - **Database**: MongoDB (NoSQL)
 - **Containerization**: Docker & Docker Compose
 - **ML Engine**: Scikit-learn (RandomForest)
+
+---
+
+## ⚠️ Important Setup Notice
+
+Sentrix uses **Google Gemini API** for optional AI-assisted analysis and contextual intelligence.
+
+Before running the project, you must:
+
+1. Create a **Gemini API key** from Google AI Studio  
+2. Store the key securely in a `.env` file  
+
+### Environment Configuration
+
+Create a `.env` file in the backend root directory and add:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+---
 
 ## ⚡ Getting Started
 
