@@ -90,21 +90,25 @@ The outcome is actionable, explainable intelligence instead of raw alerts.
 ## 🏗️ System Architecture
 
 ```mermaid
-graph TD
-    User[User / UI] -->|Start Scan| API[Flask API]
-    API -->|Queue Task| Redis[(Redis Broker)]
-    Redis -->|Consume| Worker[Celery Worker]
+graph LR
+    UI[Web UI / Client] --> API[Flask API Gateway]
 
-    subgraph Scanning Pipeline
-        Worker --> Crawl[Recon Engine]
-        Crawl --> Detect[Leak Detector]
-        Detect --> Valid[Validation Analyzer]
-        Valid --> OSINT[OSINT Correlator]
-        OSINT --> ML[Risk Classifier]
-    end
+    API --> MQ[Redis Task Queue]
 
-    ML -->|Persist Results| Mongo[(MongoDB)]
-    API -->|Fetch Results| Mongo
+    MQ --> Recon[Recon & Crawl Service]
+    MQ --> Detect[Leak Detection Service]
+    MQ --> Validate[Validation Service]
+    MQ --> OSINT[OSINT Intelligence Service]
+    MQ --> Risk[AI Risk Scoring Service]
+
+    Recon --> Store[(MongoDB)]
+    Detect --> Store
+    Validate --> Store
+    OSINT --> Store
+    Risk --> Store
+
+    Store --> API
+    API --> UI
 ```
 
 ## 🛠️ Tech Stack
